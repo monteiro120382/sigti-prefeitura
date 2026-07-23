@@ -1,0 +1,27 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Ambiente
+.env
+.env.*
+
+# Build
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Prisma
+backend/node_modules/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Sistema
+.DS_Store
+Thumbs.db

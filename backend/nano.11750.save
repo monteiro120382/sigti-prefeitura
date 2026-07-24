@@ -1,0 +1,5 @@
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/secretarias", secretariaRoutes);
+router.use("/setores", setorRoutes);
+router.use("/funcionarios", funcionarioRoutes);

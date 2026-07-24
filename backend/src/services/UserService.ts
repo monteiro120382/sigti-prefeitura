@@ -1,12 +1,13 @@
 import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
+import { Perfil } from "@prisma/client";
 
 export class UserService {
   async create(data: {
     nome: string;
     email: string;
     senha: string;
-    perfil?: string;
+    perfil?: Perfil;
   }) {
     const usuarioExiste = await prisma.user.findUnique({
       where: {
@@ -25,7 +26,7 @@ export class UserService {
         nome: data.nome,
         email: data.email,
         senha: senhaHash,
-        perfil: data.perfil || "ADMIN",
+        perfil: data.perfil ?? Perfil.ADMIN,
       },
     });
 

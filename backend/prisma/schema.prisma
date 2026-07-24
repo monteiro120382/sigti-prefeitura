@@ -13,39 +13,154 @@ enum Perfil {
   SOLICITANTE
 }
 
+enum StatusEquipamento {
+  EM_USO
+  ESTOQUE
+  MANUTENCAO
+  BAIXADO
+
+  ADMIN
+  TECNICO
+  SOLICITANTE
+}
+
+enum Prioridade {
+  BAIXA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
+enum StatusChamado {
+  ABERTO
+  EM_ATENDIMENTO
+  AGUARDANDO
+  FINALIZADO
+  CANCELADO
+}
+
+model Chamado {
+  id Int @id @default(autoincrement())
+
+  protocolo String @unique
+
+  titulo    String
+  descricao String
+
+  prioridade Prioridade @default(MEDIA)
+
+  status StatusChamado @default(ABERTO)
+
+  secretariaId Int
+  secretaria   Secretaria @relation(fields: [secretariaId], references: [id])
+
+  setorId Int
+  setor   Setor @relation(fields: [setorId], references: [id])
+
+  funcionarioId Int
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
+
+  equipamentoId Int?
+  equipamento   Equipamento? @relation(fields: [equipamentoId], references: [id])
+
+  tecnicoId Int?
+  tecnico   User?    @relation("TecnicoChamados", fields: [tecnicoId], references: [id])
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  nome      String
-  email     String   @unique
-  senha     String
-  perfil    Perfil   @default(ADMIN)
-  ativo     Boolean  @default(true)
+  id                Int       @id @default(autoincrement())
+  nome              String
+  email             String    @unique
+  senha             String
+  perfil            Perfil    @default(ADMIN)
+  ativo             Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  chamadosAtendidos Chamado[] @relation("TecnicoChamados")
+}
+
+model Secretaria {
+  id    Int     @id @default(autoincrement())
+  nome  String  @unique
+  sigla String  @unique
+  ativa Boolean @default(true)
+
+  setores      Setor[]
+  funcionarios Funcionario[]
+  equipamentos Equipamento[]
+  chamados     Chamado[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Secretaria {
-  id         Int      @id @default(autoincrement())
-  nome       String   @unique
-  sigla      String   @unique
-  ativa      Boolean  @default(true)
+model Setor {
+  id    Int     @id @default(autoincrement())
+  nome  String
+  sigla String?
 
-  setores    Setor[]
+  secretariaId Int
+  secretaria   Secretaria @relation(fields: [secretariaId], references: [id])
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  funcionarios Funcionario[]
+  equipamentos Equipamento[]
+  chamados     Chamado[]
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Setor {
-  id            Int         @id @default(autoincrement())
-  nome          String
-  sigla         String?
+model Funcionario {
+  id Int @id @default(autoincrement())
 
-  secretariaId  Int
-  secretaria    Secretaria  @relation(fields: [secretariaId], references: [id])
+  nome      String
+  matricula String @unique
+  cargo     String
+  email     String
+  telefone  String
 
-  ativo         Boolean     @default(true)
+  secretariaId Int
+  secretaria   Secretaria    @relation(fields: [secretariaId], references: [id])
+  equipamentos Equipamento[]
+  chamados     Chamado[]
+  setorId      Int
+  setor        Setor         @relation(fields: [setorId], references: [id])
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipamento {
+  id Int @id @default(autoincrement())
+
+  patrimonio  String  @unique
+  tipo        String
+  marca       String
+  modelo      String
+  numeroSerie String?
+
+  secretariaId Int
+  secretaria   Secretaria @relation(fields: [secretariaId], references: [id])
+
+  setorId Int
+  setor   Setor @relation(fields: [setorId], references: [id])
+
+  funcionarioId Int?
+  funcionario   Funcionario?      @relation(fields: [funcionarioId], references: [id])
+  status        StatusEquipamento @default(EM_USO)
+
+  observacao String?
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  chamados  Chamado[]
 }

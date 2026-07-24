@@ -14,16 +14,24 @@ export function auth(
   req: AuthRequest,
   res: Response,
   next: NextFunction
-) {
+): void {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({
+    res.status(401).json({
       erro: "Token não informado.",
     });
+    return;
   }
 
   const [, token] = authHeader.split(" ");
+
+  if (!token) {
+    res.status(401).json({
+      erro: "Token não informado.",
+    });
+    return;
+  }
 
   try {
     const decoded = jwt.verify(
@@ -34,9 +42,12 @@ export function auth(
     req.user = decoded;
 
     next();
-  } catch {
-    return res.status(401).json({
+  } catch (error) {
+    console.error("Erro ao validar JWT:", error);
+
+    res.status(401).json({
       erro: "Token inválido.",
     });
+    return;
   }
 }

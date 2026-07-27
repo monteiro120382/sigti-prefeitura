@@ -1,3 +1,5 @@
+import { validate } from "../middleware/validate";
+import { createUserSchema } from "../validators/user.validator";
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { auth } from "../middleware/auth";
@@ -11,8 +13,10 @@ router.post(
   "/",
   auth,
   authorize(["ADMIN"]),
+  validate(createUserSchema),
   (req, res) => userController.create(req, res)
 );
+
 
 // Apenas ADMIN pode visualizar seus dados
 router.get(

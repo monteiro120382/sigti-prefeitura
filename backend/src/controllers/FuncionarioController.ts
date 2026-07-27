@@ -13,7 +13,11 @@ export class FuncionarioController {
     try {
       const funcionario = await service.criar(req.body);
 
-      return res.status(201).json(funcionario);
+      return res.status(201).json({
+        success: true,
+        message: "Funcionário cadastrado com sucesso.",
+        data: funcionario,
+      });
 
     } catch (error) {
       next(error);
@@ -28,7 +32,11 @@ export class FuncionarioController {
     try {
       const funcionarios = await service.listar();
 
-      return res.json(funcionarios);
+      return res.status(200).json({
+        success: true,
+        message: "Funcionários listados com sucesso.",
+        data: funcionarios,
+      });
 
     } catch (error) {
       next(error);
@@ -45,7 +53,11 @@ export class FuncionarioController {
         Number(req.params.id)
       );
 
-      return res.json(funcionario);
+      return res.status(200).json({
+        success: true,
+        message: "Funcionário encontrado com sucesso.",
+        data: funcionario,
+      });
 
     } catch (error) {
       next(error);
@@ -63,7 +75,11 @@ export class FuncionarioController {
         req.body
       );
 
-      return res.json(funcionario);
+      return res.status(200).json({
+        success: true,
+        message: "Funcionário atualizado com sucesso.",
+        data: funcionario,
+      });
 
     } catch (error) {
       next(error);
@@ -80,8 +96,9 @@ export class FuncionarioController {
         Number(req.params.id)
       );
 
-      return res.json({
-        mensagem: "Funcionário removido"
+      return res.status(200).json({
+        success: true,
+        message: "Funcionário removido com sucesso.",
       });
 
     } catch (error) {

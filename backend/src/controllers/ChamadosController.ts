@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { EquipamentoService } from "../services/EquipamentoService";
+import { ChamadoService } from "../services/ChamadoService";
 
-const service = new EquipamentoService();
+const service = new ChamadoService();
 
-export class EquipamentoController {
+export class ChamadoController {
 
   async criar(
     req: Request,
@@ -11,12 +11,12 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
-      const equipamento = await service.criar(req.body);
+      const chamado = await service.criar(req.body);
 
       return res.status(201).json({
         success: true,
-        message: "Equipamento cadastrado com sucesso.",
-        data: equipamento,
+        message: "Chamado criado com sucesso.",
+        data: chamado,
       });
 
     } catch (error) {
@@ -30,12 +30,12 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
-      const equipamentos = await service.listar();
+      const chamados = await service.listar();
 
       return res.status(200).json({
         success: true,
-        message: "Equipamentos listados com sucesso.",
-        data: equipamentos,
+        message: "Chamados listados com sucesso.",
+        data: chamados,
       });
 
     } catch (error) {
@@ -49,14 +49,14 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
-      const equipamento = await service.buscarPorId(
+      const chamado = await service.buscarPorId(
         Number(req.params.id)
       );
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento encontrado com sucesso.",
-        data: equipamento,
+        message: "Chamado encontrado com sucesso.",
+        data: chamado,
       });
 
     } catch (error) {
@@ -70,15 +70,15 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
-      const equipamento = await service.atualizar(
+      const chamado = await service.atualizar(
         Number(req.params.id),
         req.body
       );
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento atualizado com sucesso.",
-        data: equipamento,
+        message: "Chamado atualizado com sucesso.",
+        data: chamado,
       });
 
     } catch (error) {
@@ -98,7 +98,7 @@ export class EquipamentoController {
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento removido com sucesso.",
+        message: "Chamado removido com sucesso.",
       });
 
     } catch (error) {

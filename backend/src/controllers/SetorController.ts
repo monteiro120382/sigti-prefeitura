@@ -19,7 +19,11 @@ export class SetorController {
         Number(secretariaId)
       );
 
-      return res.status(201).json(setor);
+      return res.status(201).json({
+        success: true,
+        message: "Setor cadastrado com sucesso.",
+        data: setor,
+      });
 
     } catch (error) {
       next(error);
@@ -34,7 +38,11 @@ export class SetorController {
     try {
       const setores = await service.list();
 
-      return res.json(setores);
+      return res.status(200).json({
+        success: true,
+        message: "Setores listados com sucesso.",
+        data: setores,
+      });
 
     } catch (error) {
       next(error);
@@ -53,7 +61,11 @@ export class SetorController {
         Number(secretariaId)
       );
 
-      return res.json(setores);
+      return res.status(200).json({
+        success: true,
+        message: "Setores da secretaria listados com sucesso.",
+        data: setores,
+      });
 
     } catch (error) {
       next(error);

@@ -15,7 +15,11 @@ export class SecretariaController {
 
       const secretaria = await service.create(nome, sigla);
 
-      return res.status(201).json(secretaria);
+      return res.status(201).json({
+        success: true,
+        message: "Secretaria cadastrada com sucesso.",
+        data: secretaria,
+      });
 
     } catch (error) {
       next(error);
@@ -30,7 +34,11 @@ export class SecretariaController {
     try {
       const secretarias = await service.list();
 
-      return res.json(secretarias);
+      return res.status(200).json({
+        success: true,
+        message: "Secretarias listadas com sucesso.",
+        data: secretarias,
+      });
 
     } catch (error) {
       next(error);

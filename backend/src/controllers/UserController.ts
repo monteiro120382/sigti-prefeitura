@@ -21,7 +21,11 @@ export class UserController {
         perfil,
       });
 
-      return res.status(201).json(usuario);
+      return res.status(201).json({
+        success: true,
+        message: "Usuário criado com sucesso.",
+        data: usuario,
+      });
 
     } catch (error) {
       next(error);

@@ -1,28 +1,24 @@
-import { validate } from "../middleware/validate";
-import { createUserSchema } from "../validators/user.validator";
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { auth } from "../middleware/auth";
 import { authorize } from "../middleware/authorize";
+import { validate } from "../middleware/validate";
+import { createUserSchema } from "../validators/user.validator";
 
 const router = Router();
 const userController = new UserController();
 
-// Apenas ADMIN pode criar usuários
 router.post(
   "/",
   auth,
   authorize(["ADMIN"]),
   validate(createUserSchema),
-  (req, res) => userController.create(req, res)
+  (req, res, next) => userController.create(req, res, next)
 );
 
-
-// Apenas ADMIN pode visualizar seus dados
 router.get(
   "/me",
   auth,
-  authorize(["ADMIN"]),
   (req, res) => {
     res.json({
       mensagem: "Token válido!",

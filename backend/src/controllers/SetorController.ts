@@ -1,11 +1,15 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { SetorService } from "../services/SetorService";
 
 const service = new SetorService();
 
 export class SetorController {
 
-  async create(req: Request, res: Response) {
+  async create(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { nome, sigla, secretariaId } = req.body;
 
@@ -18,27 +22,42 @@ export class SetorController {
       return res.status(201).json(setor);
 
     } catch (error) {
-      console.error(error);
-
-      return res.status(500).json({
-        erro: error instanceof Error ? error.message : "Erro interno"
-      });
+      next(error);
     }
   }
 
-  async list(req: Request, res: Response) {
-    const setores = await service.list();
+  async list(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const setores = await service.list();
 
-    return res.json(setores);
+      return res.json(setores);
+
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async listBySecretaria(req: Request, res: Response) {
-    const { secretariaId } = req.params;
+  async listBySecretaria(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { secretariaId } = req.params;
 
-    const setores = await service.listBySecretaria(
-      Number(secretariaId)
-    );
+      const setores = await service.listBySecretaria(
+        Number(secretariaId)
+      );
 
-    return res.json(setores);
+      return res.json(setores);
+
+    } catch (error) {
+      next(error);
+    }
   }
+
 }

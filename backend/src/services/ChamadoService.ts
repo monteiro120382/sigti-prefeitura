@@ -26,9 +26,11 @@ export class ChamadoService {
         }
       }
     });
+
   }
 
   async listar() {
+
     return prisma.chamado.findMany({
       include: {
         secretaria: true,
@@ -48,9 +50,11 @@ export class ChamadoService {
         createdAt: "desc"
       }
     });
+
   }
 
   async buscarPorId(id: number) {
+
     return prisma.chamado.findUnique({
       where: {
         id
@@ -67,17 +71,50 @@ export class ChamadoService {
             email: true,
             perfil: true
           }
+        },
+        historicos: {
+          include: {
+            usuario: {
+              select: {
+                id: true,
+                nome: true,
+                email: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: "desc"
+          }
         }
       }
     });
+
   }
 
-  async atualizar(id: number, data: any) {
-    return prisma.chamado.update({
+  async atualizar(
+    id: number,
+    data: any,
+    usuarioId?: number
+  ) {
+
+    const chamadoAtual = await prisma.chamado.findUnique({
+      where: {
+        id
+      }
+    });
+
+    if (!chamadoAtual) {
+      throw new Error("Chamado não encontrado.");
+    }
+
+    // Remove a observação antes de atualizar o chamado
+    const { observacao, ...dadosChamado } = data;
+
+    const chamadoAtualizado = await prisma.chamado.update({
       where: {
         id
       },
-      data,
+      data: dadosChamado,
       include: {
         secretaria: true,
         setor: true,
@@ -93,14 +130,37 @@ export class ChamadoService {
         }
       }
     });
+
+    // Registra histórico somente se o status mudou
+    if (
+      dadosChamado.status &&
+      dadosChamado.status !== chamadoAtual.status
+    ) {
+
+      await prisma.chamadoHistorico.create({
+        data: {
+          chamadoId: id,
+          statusAnterior: chamadoAtual.status,
+          statusNovo: dadosChamado.status,
+          observacao: observacao ?? null,
+          usuarioId: usuarioId ?? null
+        }
+      });
+
+    }
+
+    return chamadoAtualizado;
+
   }
 
   async remover(id: number) {
+
     return prisma.chamado.delete({
       where: {
         id
       }
     });
+
   }
 
 }

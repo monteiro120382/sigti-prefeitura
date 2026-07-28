@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { DashboardController } from "../controllers/DashboardController";
 import { auth } from "../middleware/auth";
+import { authorize } from "../middleware/authorize";
 
 const router = Router();
 
@@ -21,10 +22,13 @@ const controller = new DashboardController();
  *         description: Resumo carregado com sucesso.
  *       401:
  *         description: Token inválido ou não informado.
+ *       403:
+ *         description: Acesso negado.
  */
 router.get(
   "/",
   auth,
+  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
   (req, res, next) => controller.resumo(req, res, next)
 );
 

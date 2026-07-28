@@ -8,6 +8,7 @@ import funcionarioRoutes from "./funcionario.routes";
 import equipamentoRoutes from "./equipamento.routes";
 import chamadoRoutes from "./chamado.routes";
 import dashboardRoutes from "./dashboard.routes";
+import chamadoHistoricoRoutes from "./chamadoHistorico.routes";
 
 const router = Router();
 
@@ -18,7 +19,9 @@ router.use("/setores", setorRoutes);
 router.use("/funcionarios", funcionarioRoutes);
 router.use("/equipamentos", equipamentoRoutes);
 router.use("/chamados", chamadoRoutes);
+router.use("/chamados", chamadoHistoricoRoutes);
 router.use("/dashboard", dashboardRoutes);
+
 
 router.get("/", (req, res) => {
   res.json({
@@ -27,5 +30,6 @@ router.get("/", (req, res) => {
     versao: "1.0.0"
   });
 });
+
 
 export default router;

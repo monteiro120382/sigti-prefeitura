@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ChamadoController } from "../controllers/ChamadoController";
 import { auth } from "../middleware/auth";
+import { authorize } from "../middleware/authorize";
 import { validate } from "../middleware/validate";
 import { createChamadoSchema } from "../validators/chamado.validator";
 
@@ -20,6 +21,7 @@ const controller = new ChamadoController();
 router.post(
   "/",
   auth,
+  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
   validate(createChamadoSchema),
   (req, res, next) => controller.criar(req, res, next)
 );
@@ -37,6 +39,7 @@ router.post(
 router.get(
   "/",
   auth,
+  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
   (req, res, next) => controller.listar(req, res, next)
 );
 
@@ -53,6 +56,7 @@ router.get(
 router.get(
   "/:id",
   auth,
+  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
   (req, res, next) => controller.buscar(req, res, next)
 );
 
@@ -69,6 +73,7 @@ router.get(
 router.put(
   "/:id",
   auth,
+  authorize(["ADMIN", "TECNICO"]),
   (req, res, next) => controller.atualizar(req, res, next)
 );
 
@@ -85,6 +90,7 @@ router.put(
 router.delete(
   "/:id",
   auth,
+  authorize(["ADMIN"]),
   (req, res, next) => controller.remover(req, res, next)
 );
 

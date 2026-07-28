@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { EquipamentoController } from "../controllers/EquipamentoController";
 import { auth } from "../middleware/auth";
+import { authorize } from "../middleware/authorize";
 import { validate } from "../middleware/validate";
 import { createEquipamentoSchema } from "../validators/equipamento.validator";
 
@@ -20,6 +21,7 @@ const controller = new EquipamentoController();
 router.post(
   "/",
   auth,
+  authorize(["ADMIN"]),
   validate(createEquipamentoSchema),
   (req, res, next) => controller.criar(req, res, next)
 );
@@ -37,6 +39,7 @@ router.post(
 router.get(
   "/",
   auth,
+  authorize(["ADMIN", "TECNICO"]),
   (req, res, next) => controller.listar(req, res, next)
 );
 
@@ -53,6 +56,7 @@ router.get(
 router.get(
   "/:id",
   auth,
+  authorize(["ADMIN", "TECNICO"]),
   (req, res, next) => controller.buscar(req, res, next)
 );
 
@@ -69,6 +73,7 @@ router.get(
 router.put(
   "/:id",
   auth,
+  authorize(["ADMIN"]),
   (req, res, next) => controller.atualizar(req, res, next)
 );
 
@@ -85,6 +90,7 @@ router.put(
 router.delete(
   "/:id",
   auth,
+  authorize(["ADMIN"]),
   (req, res, next) => controller.remover(req, res, next)
 );
 

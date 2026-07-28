@@ -8,14 +8,12 @@ const options: swaggerJsdoc.Options = {
       version: "1.0.0",
       description: "API do Sistema Integrado de Gestão de Tecnologia da Informação",
     },
-
     servers: [
       {
         url: "http://localhost:3000",
         description: "Servidor Local",
       },
     ],
-
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -25,18 +23,18 @@ const options: swaggerJsdoc.Options = {
         },
       },
     },
-
     security: [
       {
         bearerAuth: [],
       },
     ],
   },
-
   apis: [
     "./src/routes/*.ts",
     "./src/controllers/*.ts",
   ],
 };
 
-export const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(options);
+
+export default swaggerSpec;

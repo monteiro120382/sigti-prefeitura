@@ -64,9 +64,11 @@ model Chamado {
   equipamento   Equipamento? @relation(fields: [equipamentoId], references: [id])
 
   tecnicoId Int?
-  tecnico   User?    @relation("TecnicoChamados", fields: [tecnicoId], references: [id])
-  createdAt DateTime @default(now())
+  tecnico   User? @relation("TecnicoChamados", fields: [tecnicoId], references: [id])
 
+  historicos ChamadoHistorico[]
+
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -80,6 +82,7 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   chamadosAtendidos Chamado[] @relation("TecnicoChamados")
+  historicos ChamadoHistorico[]
 }
 
 model Secretaria {
@@ -92,6 +95,7 @@ model Secretaria {
   funcionarios Funcionario[]
   equipamentos Equipamento[]
   chamados     Chamado[]
+  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -164,3 +168,23 @@ model Equipamento {
   updatedAt DateTime  @updatedAt
   chamados  Chamado[]
 }
+model ChamadoHistorico {
+
+  id Int @id @default(autoincrement())
+
+  chamadoId Int
+  chamado Chamado @relation(fields: [chamadoId], references: [id])
+
+  statusAnterior StatusChamado?
+  statusNovo StatusChamado
+
+  observacao String?
+
+  usuarioId Int?
+  usuario User? @relation(fields: [usuarioId], references: [id])
+
+  createdAt DateTime @default(now())
+
+}
+
+  

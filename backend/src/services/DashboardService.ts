@@ -12,7 +12,9 @@ export class DashboardService {
       equipamentos,
       chamadosAbertos,
       chamadosEmAtendimento,
+      chamadosAguardando,
       chamadosFinalizados,
+      chamadosCancelados,
       chamadosAlta,
       chamadosMedia,
       chamadosBaixa
@@ -42,7 +44,19 @@ export class DashboardService {
 
       prisma.chamado.count({
         where: {
+          status: "AGUARDANDO"
+        }
+      }),
+
+      prisma.chamado.count({
+        where: {
           status: "FINALIZADO"
+        }
+      }),
+
+      prisma.chamado.count({
+        where: {
+          status: "CANCELADO"
         }
       }),
 
@@ -69,33 +83,23 @@ export class DashboardService {
     return {
 
       usuarios,
-
       secretarias,
-
       setores,
-
       funcionarios,
-
       equipamentos,
 
       chamados: {
-
         abertos: chamadosAbertos,
-
         emAtendimento: chamadosEmAtendimento,
-
-        finalizados: chamadosFinalizados
-
+        aguardando: chamadosAguardando,
+        finalizados: chamadosFinalizados,
+        cancelados: chamadosCancelados
       },
 
       prioridades: {
-
         alta: chamadosAlta,
-
         media: chamadosMedia,
-
         baixa: chamadosBaixa
-
       }
 
     };

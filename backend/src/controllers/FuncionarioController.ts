@@ -11,6 +11,7 @@ export class FuncionarioController {
     next: NextFunction
   ) {
     try {
+
       const funcionario = await service.criar(req.body);
 
       return res.status(201).json({
@@ -30,12 +31,17 @@ export class FuncionarioController {
     next: NextFunction
   ) {
     try {
-      const funcionarios = await service.listar();
+
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+
+      const resultado = await service.listar(page, limit);
 
       return res.status(200).json({
         success: true,
         message: "Funcionários listados com sucesso.",
-        data: funcionarios,
+        data: resultado.data,
+        pagination: resultado.pagination,
       });
 
     } catch (error) {
@@ -49,6 +55,7 @@ export class FuncionarioController {
     next: NextFunction
   ) {
     try {
+
       const funcionario = await service.buscarPorId(
         Number(req.params.id)
       );
@@ -70,6 +77,7 @@ export class FuncionarioController {
     next: NextFunction
   ) {
     try {
+
       const funcionario = await service.atualizar(
         Number(req.params.id),
         req.body
@@ -92,6 +100,7 @@ export class FuncionarioController {
     next: NextFunction
   ) {
     try {
+
       await service.remover(
         Number(req.params.id)
       );

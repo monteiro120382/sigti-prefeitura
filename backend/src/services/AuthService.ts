@@ -3,16 +3,28 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export class AuthService {
+
   async login(email: string, senha: string) {
+
+    
+
     const usuario = await prisma.user.findUnique({
       where: { email },
     });
+
+    
 
     if (!usuario) {
       throw new Error("E-mail ou senha inválidos.");
     }
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+
+    const senhaCorreta = await bcrypt.compare(
+      senha,
+      usuario.senha
+    );
+
+   
 
     if (!senhaCorreta) {
       throw new Error("E-mail ou senha inválidos.");

@@ -12,16 +12,38 @@ export class FuncionarioService {
     });
   }
 
-  async listar() {
-    return prisma.funcionario.findMany({
-      include: {
-        secretaria: true,
-        setor: true
-      },
-      orderBy: {
-        nome: "asc"
+  async listar(page = 1, limit = 10) {
+
+    const skip = (page - 1) * limit;
+
+    const [funcionarios, total] = await Promise.all([
+
+      prisma.funcionario.findMany({
+        skip,
+        take: limit,
+        include: {
+          secretaria: true,
+          setor: true
+        },
+        orderBy: {
+          nome: "asc"
+        }
+      }),
+
+      prisma.funcionario.count()
+
+    ]);
+
+    return {
+      data: funcionarios,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
       }
-    });
+    };
+
   }
 
   async buscarPorId(id: number) {

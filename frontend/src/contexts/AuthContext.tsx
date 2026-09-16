@@ -20,6 +20,7 @@ interface AuthContextData {
   login: (token: string, usuario: Usuario) => void;
   logout: () => void;
   autenticado: boolean;
+  carregando: boolean;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -31,14 +32,27 @@ export function AuthProvider({
 }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const tokenStorage = localStorage.getItem("token");
-    const usuarioStorage = localStorage.getItem("usuario");
+    try {
+      const tokenStorage = localStorage.getItem("token");
+      const usuarioStorage = localStorage.getItem("usuario");
 
-    if (tokenStorage && usuarioStorage) {
-      setToken(tokenStorage);
-      setUsuario(JSON.parse(usuarioStorage));
+      if (tokenStorage && usuarioStorage) {
+        setToken(tokenStorage);
+        setUsuario(JSON.parse(usuarioStorage));
+      }
+    } catch (erro) {
+      console.error("Erro ao recuperar sessão:", erro);
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario");
+
+      setToken(null);
+      setUsuario(null);
+    } finally {
+      setCarregando(false);
     }
   }, []);
 
@@ -66,6 +80,7 @@ export function AuthProvider({
         login,
         logout,
         autenticado: !!token,
+        carregando,
       }}
     >
       {children}

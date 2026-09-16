@@ -29,7 +29,11 @@ export default function LoginPage() {
 
       login(response.token, response.user);
 
-      navigate("/dashboard");
+      if (response.user.perfil === "SOLICITANTE") {
+        navigate("/chamados");
+      } else {
+        navigate("/dashboard");
+      }
     } catch {
       setErro("E-mail ou senha inválidos.");
     } finally {
@@ -95,6 +99,20 @@ export default function LoginPage() {
           </Button>
 
         </form>
+
+        <div className="mt-5 text-center">
+          <p className="text-sm text-slate-500">
+            Ainda não possui cadastro?
+          </p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/cadastro-solicitante")}
+            className="mt-1 text-sm font-medium text-blue-700 hover:text-blue-800"
+          >
+            Cadastre-se como solicitante
+          </button>
+        </div>
 
       </div>
     </div>

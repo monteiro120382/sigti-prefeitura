@@ -11,12 +11,43 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
+
       const equipamento = await service.criar(req.body);
 
       return res.status(201).json({
         success: true,
-        message: "Equipamento cadastrado com sucesso.",
-        data: equipamento,
+        message: "Patrimônio cadastrado com sucesso.",
+        data: equipamento
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async importar(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+
+      const registros = req.body?.registros;
+
+      if (!Array.isArray(registros)) {
+        return res.status(400).json({
+          success: false,
+          message: "Nenhum registro válido foi enviado para importação."
+        });
+      }
+
+      const resultado =
+        await service.importar(registros);
+
+      return res.status(200).json({
+        success: true,
+        message: "Processamento da importação concluído.",
+        data: resultado
       });
 
     } catch (error) {
@@ -30,12 +61,14 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
+
       const equipamentos = await service.listar();
 
       return res.status(200).json({
         success: true,
-        message: "Equipamentos listados com sucesso.",
-        data: equipamentos,
+        message: "Patrimônios listados com sucesso.",
+        total: equipamentos.length,
+        data: equipamentos
       });
 
     } catch (error) {
@@ -49,14 +82,15 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
+
       const equipamento = await service.buscarPorId(
         Number(req.params.id)
       );
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento encontrado com sucesso.",
-        data: equipamento,
+        message: "Patrimônio encontrado com sucesso.",
+        data: equipamento
       });
 
     } catch (error) {
@@ -70,6 +104,7 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
+
       const equipamento = await service.atualizar(
         Number(req.params.id),
         req.body
@@ -77,8 +112,8 @@ export class EquipamentoController {
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento atualizado com sucesso.",
-        data: equipamento,
+        message: "Patrimônio atualizado com sucesso.",
+        data: equipamento
       });
 
     } catch (error) {
@@ -92,13 +127,14 @@ export class EquipamentoController {
     next: NextFunction
   ) {
     try {
+
       await service.remover(
         Number(req.params.id)
       );
 
       return res.status(200).json({
         success: true,
-        message: "Equipamento removido com sucesso.",
+        message: "Patrimônio removido com sucesso."
       });
 
     } catch (error) {

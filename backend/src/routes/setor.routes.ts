@@ -1,5 +1,3 @@
-
-
 import { Router } from "express";
 import { SetorController } from "../controllers/SetorController";
 import { auth } from "../middleware/auth";
@@ -22,14 +20,14 @@ router.post(
 router.get(
   "/",
   auth,
-  authorize(["ADMIN", "TECNICO"]),
+  authorize(["ADMIN", "TECNICO", "ESTAGIARIO", "SOLICITANTE"]),
   (req, res, next) => controller.list(req, res, next)
 );
 
 router.get(
   "/secretaria/:secretariaId",
   auth,
-  authorize(["ADMIN", "TECNICO"]),
+  authorize(["ADMIN", "TECNICO", "ESTAGIARIO", "SOLICITANTE"]),
   (req, res, next) => controller.listBySecretaria(req, res, next)
 );
 

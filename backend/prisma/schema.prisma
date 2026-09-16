@@ -11,6 +11,7 @@ enum Perfil {
   ADMIN
   TECNICO
   SOLICITANTE
+  ESTAGIARIO
 }
 
 enum StatusEquipamento {
@@ -18,10 +19,6 @@ enum StatusEquipamento {
   ESTOQUE
   MANUTENCAO
   BAIXADO
-
-  ADMIN
-  TECNICO
-  SOLICITANTE
 }
 
 enum Prioridade {
@@ -37,6 +34,11 @@ enum StatusChamado {
   AGUARDANDO
   FINALIZADO
   CANCELADO
+}
+
+enum TipoManutencao {
+  PREVENTIVA
+  CORRETIVA
 }
 
 model Chamado {
@@ -63,6 +65,9 @@ model Chamado {
   equipamentoId Int?
   equipamento   Equipamento? @relation(fields: [equipamentoId], references: [id])
 
+  solicitanteId Int?
+  solicitante   User? @relation("SolicitanteChamados", fields: [solicitanteId], references: [id])
+
   tecnicoId Int?
   tecnico   User? @relation("TecnicoChamados", fields: [tecnicoId], references: [id])
 
@@ -73,16 +78,21 @@ model Chamado {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  nome              String
-  email             String    @unique
-  senha             String
-  perfil            Perfil    @default(ADMIN)
-  ativo             Boolean   @default(true)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  chamadosAtendidos Chamado[] @relation("TecnicoChamados")
-  historicos ChamadoHistorico[]
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  perfil    Perfil   @default(ADMIN)
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chamadosAtendidos   Chamado[] @relation("TecnicoChamados")
+  chamadosSolicitados Chamado[] @relation("SolicitanteChamados")
+
+  historicos              ChamadoHistorico[]
+  movimentacaoPatrimonios MovimentacaoPatrimonio[]
+  manutencoes             Manutencao[]
 }
 
 model Secretaria {
@@ -95,14 +105,14 @@ model Secretaria {
   funcionarios Funcionario[]
   equipamentos Equipamento[]
   chamados     Chamado[]
-  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Setor {
-  id    Int     @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   nome  String
   sigla String?
 
@@ -129,11 +139,13 @@ model Funcionario {
   telefone  String
 
   secretariaId Int
-  secretaria   Secretaria    @relation(fields: [secretariaId], references: [id])
+  secretaria   Secretaria @relation(fields: [secretariaId], references: [id])
+
   equipamentos Equipamento[]
   chamados     Chamado[]
-  setorId      Int
-  setor        Setor         @relation(fields: [setorId], references: [id])
+
+  setorId Int
+  setor   Setor @relation(fields: [setorId], references: [id])
 
   ativo Boolean @default(true)
 
@@ -144,11 +156,29 @@ model Funcionario {
 model Equipamento {
   id Int @id @default(autoincrement())
 
-  patrimonio  String  @unique
-  tipo        String
-  marca       String
-  modelo      String
+  patrimonio String  @unique
+  tombamento String? @unique
+
+  tipo      String
+  categoria String
+
+  marca      String
+  fabricante String?
+  modelo     String
+
   numeroSerie String?
+
+  valorAquisicao Float?
+
+  dataAquisicao DateTime?
+
+  garantiaAte DateTime?
+
+  fornecedor String?
+
+  notaFiscal String?
+
+  localizacao String?
 
   secretariaId Int
   secretaria   Secretaria @relation(fields: [secretariaId], references: [id])
@@ -157,34 +187,94 @@ model Equipamento {
   setor   Setor @relation(fields: [setorId], references: [id])
 
   funcionarioId Int?
-  funcionario   Funcionario?      @relation(fields: [funcionarioId], references: [id])
-  status        StatusEquipamento @default(EM_USO)
+  funcionario   Funcionario? @relation(fields: [funcionarioId], references: [id])
+
+  status StatusEquipamento @default(EM_USO)
+
+  estado String @default("BOM")
+
+  ultimaManutencao DateTime?
+
+  proximaManutencao DateTime?
 
   observacao String?
 
   ativo Boolean @default(true)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  chamados  Chamado[]
-}
-model ChamadoHistorico {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  chamados      Chamado[]
+  movimentacoes MovimentacaoPatrimonio[]
+  manutencoes   Manutencao[]
+}
+
+model ChamadoHistorico {
   id Int @id @default(autoincrement())
 
   chamadoId Int
-  chamado Chamado @relation(fields: [chamadoId], references: [id])
+  chamado   Chamado @relation(fields: [chamadoId], references: [id])
 
   statusAnterior StatusChamado?
-  statusNovo StatusChamado
+  statusNovo     StatusChamado
 
   observacao String?
 
   usuarioId Int?
-  usuario User? @relation(fields: [usuarioId], references: [id])
+  usuario   User? @relation(fields: [usuarioId], references: [id])
 
   createdAt DateTime @default(now())
-
 }
 
-  
+enum TipoMovimentacao {
+  ENTREGA
+  TRANSFERENCIA
+  DEVOLUCAO
+  MANUTENCAO
+  RETORNO_MANUTENCAO
+  BAIXA
+}
+
+model MovimentacaoPatrimonio {
+  id Int @id @default(autoincrement())
+
+  equipamentoId Int
+  equipamento   Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  usuarioId Int
+  usuario   User @relation(fields: [usuarioId], references: [id])
+
+  tipo TipoMovimentacao
+
+  observacao String?
+
+  createdAt DateTime @default(now())
+}
+
+model Manutencao {
+  id Int @id @default(autoincrement())
+
+  equipamentoId Int
+  equipamento   Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  usuarioId Int
+  usuario   User @relation(fields: [usuarioId], references: [id])
+
+  tipo TipoManutencao
+
+  descricao String
+
+  empresa String?
+
+  valor Decimal?
+
+  dataEnvio DateTime @default(now())
+
+  dataRetorno DateTime?
+
+  garantiaAte DateTime?
+
+  observacao String?
+
+  createdAt DateTime @default(now())
+}

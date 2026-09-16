@@ -20,14 +20,14 @@ router.post(
 router.get(
   "/",
   auth,
-  authorize(["ADMIN", "TECNICO"]),
+  authorize(["ADMIN", "TECNICO", "ESTAGIARIO", "SOLICITANTE"]),
   (req, res, next) => controller.listar(req, res, next)
 );
 
 router.get(
   "/:id",
   auth,
-  authorize(["ADMIN", "TECNICO"]),
+  authorize(["ADMIN", "TECNICO", "ESTAGIARIO", "SOLICITANTE"]),
   (req, res, next) => controller.buscar(req, res, next)
 );
 

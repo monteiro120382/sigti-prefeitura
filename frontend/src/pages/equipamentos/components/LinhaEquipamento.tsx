@@ -1,7 +1,3 @@
-import { Eye, Pencil, Trash2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-
 import type { Equipamento } from "@/types/equipamento";
 
 interface Props {
@@ -9,6 +5,7 @@ interface Props {
   onVisualizar?: (equipamento: Equipamento) => void;
   onEditar?: (equipamento: Equipamento) => void;
   onExcluir?: (id: number) => void;
+  onAlterarStatus?: (equipamento: Equipamento) => void;
 }
 
 export default function LinhaEquipamento({
@@ -16,93 +13,103 @@ export default function LinhaEquipamento({
   onVisualizar,
   onEditar,
   onExcluir,
+  onAlterarStatus,
 }: Props) {
   function corStatus(status: string) {
     switch (status) {
       case "EM_USO":
-        return "bg-green-100 text-green-700";
+        return "rounded bg-green-100 px-2 py-1 text-sm text-green-700";
 
       case "ESTOQUE":
-        return "bg-blue-100 text-blue-700";
+        return "rounded bg-blue-100 px-2 py-1 text-sm text-blue-700";
 
       case "MANUTENCAO":
-        return "bg-yellow-100 text-yellow-700";
+        return "rounded bg-yellow-100 px-2 py-1 text-sm text-yellow-700";
 
       case "BAIXADO":
-        return "bg-red-100 text-red-700";
+        return "rounded bg-red-100 px-2 py-1 text-sm text-red-700";
 
       default:
-        return "bg-slate-100 text-slate-700";
+        return "rounded bg-slate-100 px-2 py-1 text-sm text-slate-700";
     }
   }
 
   return (
-    <tr className="border-t hover:bg-slate-50">
-
-      <td className="p-3 font-medium">
+    <tr
+      key={equipamento.id}
+      className="border-t"
+    >
+      <td className="px-4 py-3">
         {equipamento.patrimonio}
       </td>
 
-      <td className="p-3">
+      <td className="px-4 py-3">
         {equipamento.tipo}
       </td>
 
-      <td className="p-3">
+      <td className="px-4 py-3">
         {equipamento.marca}
       </td>
 
-      <td className="p-3">
+      <td className="px-4 py-3">
         {equipamento.modelo}
       </td>
 
-      <td className="p-3">
+      <td className="px-4 py-3">
         {equipamento.funcionario?.nome ?? "-"}
       </td>
 
-      <td className="p-3 text-center">
-
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${corStatus(
-            equipamento.status
-          )}`}
-        >
+      <td className="px-4 py-3">
+        <span className={corStatus(equipamento.status)}>
           {equipamento.status}
         </span>
-
       </td>
 
-      <td className="p-3">
+      <td className="px-4 py-3">
+        <div className="flex justify-end gap-2">
 
-        <div className="flex justify-center gap-2">
+          {onVisualizar && (
+            <button
+              type="button"
+              onClick={() => onVisualizar(equipamento)}
+              className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+            >
+              Visualizar
+            </button>
+          )}
 
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onVisualizar?.(equipamento)}
-          >
-            <Eye size={16} />
-          </Button>
+          {onEditar && (
+            <button
+              type="button"
+              onClick={() => onEditar(equipamento)}
+              className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+            >
+              Editar
+            </button>
+          )}
 
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onEditar?.(equipamento)}
-          >
-            <Pencil size={16} />
-          </Button>
+          {onAlterarStatus && (
+            <button
+              type="button"
+              onClick={() => onAlterarStatus(equipamento)}
+              className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+            >
+              Status
+            </button>
+          )}
 
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onExcluir?.(equipamento.id)}
-          >
-            <Trash2 size={16} />
-          </Button>
+          {onExcluir && equipamento.id && (
+            <button
+              type="button"
+              onClick={() => onExcluir(equipamento.id!)}
+              className="rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+            >
+              Excluir
+            </button>
+          )}
 
         </div>
-
       </td>
-
     </tr>
   );
 }

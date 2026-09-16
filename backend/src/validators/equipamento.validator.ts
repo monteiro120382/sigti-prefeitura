@@ -2,53 +2,92 @@ import { z } from "zod";
 
 export const createEquipamentoSchema = z.object({
   patrimonio: z
-    .string({
-      error: "O patrimônio é obrigatório."
-    })
-    .min(3, "O patrimônio deve ter no mínimo 3 caracteres."),
+    .string()
+    .min(1, "Patrimônio é obrigatório."),
+
+  tombamento: z
+    .string()
+    .optional(),
 
   tipo: z
-    .string({
-      error: "O tipo do equipamento é obrigatório."
-    })
-    .min(2, "O tipo deve ter no mínimo 2 caracteres."),
+    .string()
+    .min(1, "Tipo é obrigatório."),
+
+  categoria: z
+    .string()
+    .min(1, "Categoria é obrigatória."),
 
   marca: z
-    .string({
-      error: "A marca é obrigatória."
-    })
-    .min(2, "A marca deve ter no mínimo 2 caracteres."),
+    .string()
+    .min(1, "Marca é obrigatória."),
+
+  fabricante: z
+    .string()
+    .optional(),
 
   modelo: z
-    .string({
-      error: "O modelo é obrigatório."
-    })
-    .min(2, "O modelo deve ter no mínimo 2 caracteres."),
+    .string()
+    .min(1, "Modelo é obrigatório."),
 
   numeroSerie: z
     .string()
     .optional(),
 
+  valorAquisicao: z
+    .number()
+    .nullable()
+    .optional(),
+
+  dataAquisicao: z
+    .string()
+    .optional(),
+
+  garantiaAte: z
+    .string()
+    .optional(),
+
+  fornecedor: z
+    .string()
+    .optional(),
+
+  notaFiscal: z
+    .string()
+    .optional(),
+
+  localizacao: z
+    .string()
+    .optional(),
+
   secretariaId: z
-    .coerce
-    .number({
-      error: "A secretaria é obrigatória."
-    })
-    .int("O ID da secretaria deve ser um número inteiro.")
-    .positive("O ID da secretaria deve ser válido."),
+    .number(),
 
   setorId: z
-    .coerce
-    .number({
-      error: "O setor é obrigatório."
-    })
-    .int("O ID do setor deve ser um número inteiro.")
-    .positive("O ID do setor deve ser válido."),
+    .number(),
 
   funcionarioId: z
-    .coerce
     .number()
-    .positive("O ID do funcionário deve ser válido.")
+    .nullable()
+    .optional(),
+
+  status: z
+    .enum([
+      "EM_USO",
+      "ESTOQUE",
+      "MANUTENCAO",
+      "BAIXADO"
+    ])
+    .optional(),
+
+  estado: z
+    .string()
+    .optional(),
+
+  ultimaManutencao: z
+    .string()
+    .optional(),
+
+  proximaManutencao: z
+    .string()
     .optional(),
 
   observacao: z
@@ -57,5 +96,8 @@ export const createEquipamentoSchema = z.object({
 
   ativo: z
     .boolean()
-    .optional(),
+    .optional()
 });
+
+export const updateEquipamentoSchema =
+  createEquipamentoSchema.partial();

@@ -15,6 +15,12 @@ export function authorize(perfis: string[]) {
       });
       return;
     }
+    
+   console.log("=== DEBUG AUTHORIZE ===");
+console.log("req.user:", req.user);
+console.log("perfis permitidos:", perfis);
+console.log("perfil recebido:", req.user.perfil);
+console.log("=======================");
 
     if (!perfis.includes(req.user.perfil)) {
       res.status(403).json({
@@ -22,6 +28,12 @@ export function authorize(perfis: string[]) {
       });
       return;
     }
+  console.log("=== AUTHORIZE OK ===");
+console.log("Autorização liberada para:", req.user);
+console.log("====================");    
+
+
+
 
     next();
 

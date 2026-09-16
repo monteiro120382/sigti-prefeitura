@@ -25,3 +25,11 @@ export async function atualizarEquipamento(
 export async function excluirEquipamento(id: number) {
   return api.delete(`/equipamentos/${id}`);
 }
+
+export async function importarEquipamentos(
+  registros: any[]
+) {
+  return api.post("/equipamentos/importar", {
+    registros
+  });
+}

@@ -21,9 +21,15 @@ const controller = new ChamadoController();
 router.post(
   "/",
   auth,
-  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
+  authorize([
+    "ADMIN",
+    "TECNICO",
+    "SOLICITANTE",
+    "ESTAGIARIO"
+  ]),
   validate(createChamadoSchema),
-  (req, res, next) => controller.criar(req, res, next)
+  (req, res, next) =>
+    controller.criar(req, res, next)
 );
 
 /**
@@ -32,15 +38,21 @@ router.post(
  *   get:
  *     tags:
  *       - Chamados
- *     summary: Lista todos os chamados
+ *     summary: Lista os chamados
  *     security:
  *       - bearerAuth: []
  */
 router.get(
   "/",
   auth,
-  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
-  (req, res, next) => controller.listar(req, res, next)
+  authorize([
+    "ADMIN",
+    "TECNICO",
+    "SOLICITANTE",
+    "ESTAGIARIO"
+  ]),
+  (req, res, next) =>
+    controller.listar(req, res, next)
 );
 
 /**
@@ -56,8 +68,14 @@ router.get(
 router.get(
   "/:id",
   auth,
-  authorize(["ADMIN", "TECNICO", "SOLICITANTE"]),
-  (req, res, next) => controller.buscar(req, res, next)
+  authorize([
+    "ADMIN",
+    "TECNICO",
+    "SOLICITANTE",
+    "ESTAGIARIO"
+  ]),
+  (req, res, next) =>
+    controller.buscar(req, res, next)
 );
 
 /**
@@ -73,8 +91,31 @@ router.get(
 router.put(
   "/:id",
   auth,
-  authorize(["ADMIN", "TECNICO"]),
-  (req, res, next) => controller.atualizar(req, res, next)
+  authorize([
+    "ADMIN",
+    "TECNICO",
+    "ESTAGIARIO"
+  ]),
+  (req, res, next) =>
+    controller.atualizar(req, res, next)
+);
+
+/**
+ * @swagger
+ * /chamados/{id}/atribuir-tecnico:
+ *   patch:
+ *     tags:
+ *       - Chamados
+ *     summary: Atribui um técnico ao chamado
+ *     security:
+ *       - bearerAuth: []
+ */
+router.patch(
+  "/:id/atribuir-tecnico",
+  auth,
+  authorize(["ADMIN"]),
+  (req, res, next) =>
+    controller.atribuirTecnico(req, res, next)
 );
 
 /**
@@ -91,7 +132,8 @@ router.delete(
   "/:id",
   auth,
   authorize(["ADMIN"]),
-  (req, res, next) => controller.remover(req, res, next)
+  (req, res, next) =>
+    controller.remover(req, res, next)
 );
 
 export default router;

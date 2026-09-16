@@ -44,4 +44,19 @@ const authController = new AuthController();
  */
 router.post("/login", (req, res) => authController.login(req, res));
 
+/**
+ * @swagger
+ * /auth/cadastro-solicitante:
+ *   post:
+ *     tags:
+ *       - Autenticação
+ *     summary: Cadastra um novo solicitante
+ *     description: Permite o cadastro público de usuários com perfil SOLICITANTE.
+ */
+router.post(
+  "/cadastro-solicitante",
+  (req, res) => authController.cadastrarSolicitante(req, res)
+);
+
+
 export default router;

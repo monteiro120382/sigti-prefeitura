@@ -1,5 +1,5 @@
 export interface Equipamento {
-  id: number;
+  id?: number;
 
   patrimonio: string;
   tombamento?: string;
@@ -16,8 +16,17 @@ export interface Equipamento {
 
   secretariaId: number;
   setorId: number;
-
   funcionarioId?: number | null;
+
+  secretaria?: {
+    id: number;
+    nome: string;
+  };
+
+  setor?: {
+    id: number;
+    nome: string;
+  };
 
   funcionario?: {
     id: number;
@@ -28,4 +37,7 @@ export interface Equipamento {
   estado: string;
 
   observacao?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
 }

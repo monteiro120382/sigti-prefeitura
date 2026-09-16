@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createSetorSchema = z.object({
   nome: z
     .string({
-      required_error: "O nome do setor é obrigatório."
+      error: "O nome do setor é obrigatório."
     })
     .min(3, "O nome do setor deve ter no mínimo 3 caracteres."),
 
@@ -16,7 +16,7 @@ export const createSetorSchema = z.object({
     .preprocess(
       (valor) => Number(valor),
       z.number({
-        required_error: "A secretaria é obrigatória."
+        error: "A secretaria é obrigatória."
       })
       .int("O ID da secretaria deve ser um número inteiro.")
       .positive("O ID da secretaria deve ser válido.")

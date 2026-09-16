@@ -13,7 +13,17 @@ export class ChamadoController {
   ) {
     try {
 
-      const chamado = await service.criar(req.body);
+      if (!req.user?.id) {
+        return res.status(401).json({
+          success: false,
+          message: "Usuário não autenticado."
+        });
+      }
+
+      const chamado = await service.criar({
+        ...req.body,
+        solicitanteId: req.user.id
+      });
 
       return res.status(201).json({
         success: true,
@@ -33,7 +43,10 @@ export class ChamadoController {
   ) {
     try {
 
-      const chamados = await service.listar();
+      const chamados = await service.listar(
+        req.user?.id,
+        req.user?.perfil
+      );
 
       return res.status(200).json({
         success: true,
@@ -54,7 +67,9 @@ export class ChamadoController {
     try {
 
       const chamado = await service.buscarPorId(
-        Number(req.params.id)
+        Number(req.params.id),
+        req.user?.id,
+        req.user?.perfil
       );
 
       if (!chamado) {
@@ -91,6 +106,30 @@ export class ChamadoController {
       return res.status(200).json({
         success: true,
         message: "Chamado atualizado com sucesso.",
+        data: chamado
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async atribuirTecnico(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+
+      const chamado = await service.atribuirTecnico(
+        Number(req.params.id),
+        Number(req.body.tecnicoId),
+        req.user!.id
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Técnico atribuído com sucesso.",
         data: chamado
       });
 
